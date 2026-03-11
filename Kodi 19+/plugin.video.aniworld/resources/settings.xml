@@ -1,0 +1,10 @@
+<settings>
+    <category label="Allgemein">
+        <setting id="base_url" type="text" label="Anime Seite URL" default="" />
+    </category>
+    <category label="Playback">
+        <setting id="automirror" type="bool" label="Automatisch ersten Mirror abspielen" default="false"/>
+        <setting id="autoplay" type="bool" label="Automatisch nächste Episode" default="false"/>
+        <setting id="tls12_workaround" type="bool" label="TLSv1.2 Workaround aktivieren" default="false"/>
+    </category>
+</settings>
