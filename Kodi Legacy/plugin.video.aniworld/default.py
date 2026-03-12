@@ -14,7 +14,6 @@ _base_url=sys.argv[0]
 _handle=int(sys.argv[1])
 
 ANIME_CACHE={}
-PROXY_BASE = get_base_url()
 WIN=xbmcgui.Window(10000)
 
 html_parser=HTMLParser()
@@ -221,7 +220,7 @@ def episodes(url,anime_key):
         li.setProperty("IsPlayable","true")
         li.setArt({"thumb":cover,"poster":cover,"fanart":cover})
         li.setInfo("video",{"title":title,"plot":desc,"year":year,"genre":genres})
-        #li.setLabel(title + "\n" + desc[:50] + "…")
+        #li.setLabel(title + "\n" + desc[:50] + "Â…")
         xbmcplugin.addDirectoryItem(_handle,_base_url+"?mode=play&url="+urllib.quote(PROXY_BASE+link),li,False)
     xbmcplugin.endOfDirectory(_handle)
 
@@ -242,8 +241,8 @@ def get_opener():
 
     opener = urllib2.build_opener()
     if use_workaround:
-        # TLSv1.2 nicht möglich, nur Warnung
-        xbmc.log("TLSv1.2 Workaround nicht verfügbar in Kodi 18/Python2.7", level=xbmc.LOGWARNING)
+        # TLSv1.2 nicht mÃ¶glich, nur Warnung
+        xbmc.log("TLSv1.2 Workaround nicht verfÃ¼gbar in Kodi 18/Python2.7", level=xbmc.LOGWARNING)
 
     # Standard-Header setzen, damit die Seite nicht blockt (403 vermeiden)
     opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')]
@@ -277,7 +276,7 @@ def play(url):
         return
     hmf=resolveurl.HostedMediaFile(host_url)
     if not hmf:
-        xbmcgui.Dialog().notification("Fehler","Hoster nicht unterstützt")
+        xbmcgui.Dialog().notification("Fehler","Hoster nicht unterstÃ¼tzt")
         return
     stream_url=hmf.resolve()
     if stream_url:
@@ -298,6 +297,8 @@ def search():
 
 if __name__=="__main__":
     p={}
+	PROXY_BASE = get_base_url()
+
     if len(sys.argv)>2:
         for x in sys.argv[2][1:].split("&"):
             if "=" in x:
