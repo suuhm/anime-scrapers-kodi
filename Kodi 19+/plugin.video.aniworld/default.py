@@ -7,10 +7,14 @@ import urllib.parse
 import http.cookiejar
 import time
 import random
+import xbmc
 import xbmcgui
 import xbmcplugin
+import xbmcaddon
 import resolveurl
 
+
+ADDON = xbmcaddon.Addon()
 cookie_jar = http.cookiejar.CookieJar()
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
 urllib.request.install_opener(opener)
@@ -19,7 +23,6 @@ _base_url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 ANIME_CACHE = {}
-PROXY_BASE = get_base_url()
 
 WIN = xbmcgui.Window(10000)
 
@@ -36,7 +39,11 @@ def get_base_url():
     if not base:
         base = xbmcgui.Dialog().input("Anime Seite URL eingeben")
         if base:
-            ADDON.setSettingString("base_url", base)
+            if not "https" in base:
+                base = "https://" + base
+                ADDON.setSettingString("base_url", base)
+            else:
+                ADDON.setSettingString("base_url", base)    
     return base
 
 def set_anime_cache(anime_key, meta):
@@ -56,7 +63,7 @@ def set_anime_cache(anime_key, meta):
 def get_anime_cache(anime_key):
     """
     Liest Anime-Meta aus Window-Property.
-    Gibt Dict zurück, oder leeres Dict, wenn key fehlt.
+    Gibt Dict zurueck, oder leeres Dict, wenn key fehlt.
     """
     val = WIN.getProperty(anime_key)
     if not val:
@@ -352,7 +359,7 @@ def play(url):
 
     host_url = mirrors_list[sel]["url"]
 
-    # HIER redirect auflösen
+    # HIER redirect aufloesen
     host_url = redirect(host_url)
 
     if not host_url:
@@ -363,7 +370,7 @@ def play(url):
     hmf = resolveurl.HostedMediaFile(host_url)
 
     if not hmf:
-        xbmcgui.Dialog().notification("Fehler", "Hoster nicht unterstützt")
+        xbmcgui.Dialog().notification("Fehler", "Hoster nicht supported")
         return
 
     stream_url = hmf.resolve()
@@ -397,6 +404,7 @@ def search():
 if __name__ == "__main__":
 
     p = {}
+    PROXY_BASE = get_base_url()
 
     if len(sys.argv) > 2:
         for x in sys.argv[2][1:].split("&"):
