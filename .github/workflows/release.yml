@@ -14,40 +14,33 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Create all ZIPs
+    - name: Create ZIPs
       run: |
         TAG_VERSION=${GITHUB_REF#refs/tags/v}
-        echo "Using tag version: $TAG_VERSION"
+        echo "Tag version: $TAG_VERSION"
         
         for DIR in "Kodi 19+" "Kodi Legacy" XBMC; do
           if [ -d "$DIR" ]; then
-            echo "Processing $DIR"
-            pushd "$DIR" > /dev/null
-            
+            pushd "$DIR"
             for ADDON_DIR in */; do
               if [ -f "${ADDON_DIR}addon.xml" ]; then
                 ADDON_NAME=$(basename "$ADDON_DIR")
-                
                 DIR_SUFFIX=$(echo "$DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/+//g')
                 ZIP_NAME="../${ADDON_NAME}-${DIR_SUFFIX}-v${TAG_VERSION}.zip"
-                
-                echo "Creating $ZIP_NAME from $ADDON_DIR"
                 zip -r "$ZIP_NAME" "$ADDON_DIR"
               fi
             done
-            
-            popd > /dev/null
+            popd
           fi
         done
         
-        echo "=== ALL UNIQUE ZIPs ==="
-        ls -la *.zip | sort | uniq
+        ls -la *.zip
     
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          plugin.video.aniworld-kodi-19+-v${{ github.ref_name }}.zip
-          plugin.video.aniworld-kodi-legacy-v${{ github.ref_name }}.zip
-          plugin.video.anixworld-xbmc-v${{ github.ref_name }}.zip
+          plugin.video.aniworld-kodi-19-v*.zip
+          plugin.video.aniworld-kodi-legacy-v*.zip
+          plugin.video.anixworld-xbmc-v*.zip
         generate_release_notes: true
