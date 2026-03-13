@@ -5,42 +5,45 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     
-    - name: Create ZIPs for all addon directories
+    - name: Create ZIPs
       run: |
-        for DIR in Kodi\ 19+ Kodi\ Legacy XBMC; do
+        mkdir -p release/
+        
+        for DIR in "Kodi 19+" "Kodi Legacy" XBMC; do
           if [ -d "$DIR" ]; then
+            echo "Processing $DIR"
             cd "$DIR"
-            for ADDON in */; do
-              if [ -f "$ADDON/addon.xml" ]; then
-                ADDON_NAME=$(basename "$ADDON")
-                VERSION=$(grep '<version>' "$ADDON/addon.xml" | head -1 | sed -E 's/.*<version>([0-9.]+).*/\1/')
+            
+            for ADDON_DIR in */; do
+              if [ -f "${ADDON_DIR}addon.xml" ]; then
+                ADDON_NAME=$(basename "$ADDON_DIR")
+                VERSION=$(grep '<version>' "${ADDON_DIR}addon.xml" | head -1 | sed -E 's/.*<version>([0-9.]+).*/\1/')
                 
                 DIR_SUFFIX=$(echo "$DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/+//g')
-                ZIP_NAME="../${ADDON_NAME}-${DIR_SUFFIX}-v${VERSION}.zip"
+                ZIP_NAME="../../release/${ADDON_NAME}-${DIR_SUFFIX}-v${VERSION}.zip"
                 
-                zip -r "$ZIP_NAME" "$ADDON"
-                echo "Created $ZIP_NAME"
+                zip -r "$ZIP_NAME" "$ADDON_DIR"
+                echo "Created: $ZIP_NAME"
               fi
             done
             cd ..
           fi
         done
         
-        ls -la *.zip
+        echo "All ZIPs:"
+        ls -la release/
     
-    - name: Create GitHub Release
+    - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        files: |
-          *-kodi-19+-v*.zip
-          *-kodi-legacy-v*.zip
-          *-xbmc-v*.zip
+        files: release/*.zip
         generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
