@@ -40,8 +40,8 @@ jobs:
           fi
         done
         
-        echo "=== ALL ZIPs ==="
-        ls -la *.zip || true
+        echo "=== ALL UNIQUE ZIPs ==="
+        ls -la *.zip | sort | uniq
     
     - name: Create Release
       uses: softprops/action-gh-release@v2
