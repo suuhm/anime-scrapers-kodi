@@ -16,7 +16,9 @@ jobs:
     
     - name: Create all ZIPs
       run: |
-        # Alle ZIPs im Root erstellen
+        TAG_VERSION=${GITHUB_REF#refs/tags/v}
+        echo "Using tag version: $TAG_VERSION"
+        
         for DIR in "Kodi 19+" "Kodi Legacy" XBMC; do
           if [ -d "$DIR" ]; then
             echo "Processing $DIR"
@@ -25,10 +27,9 @@ jobs:
             for ADDON_DIR in */; do
               if [ -f "${ADDON_DIR}addon.xml" ]; then
                 ADDON_NAME=$(basename "$ADDON_DIR")
-                VERSION=$(grep '<version>' "${ADDON_DIR}addon.xml" | head -1 | sed -E 's/.*<version>([0-9.]+).*/\1/')
                 
                 DIR_SUFFIX=$(echo "$DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/+//g')
-                ZIP_NAME="../${ADDON_NAME}-${DIR_SUFFIX}-v${VERSION}.zip"
+                ZIP_NAME="../${ADDON_NAME}-${DIR_SUFFIX}-v${TAG_VERSION}.zip"
                 
                 echo "Creating $ZIP_NAME from $ADDON_DIR"
                 zip -r "$ZIP_NAME" "$ADDON_DIR"
@@ -39,12 +40,8 @@ jobs:
           fi
         done
         
-        echo "=== ALL ZIPs created ==="
-        ls -la *.zip || echo "No ZIPs in root"
-        find . -name "*.zip" -type f
-    
-    - name: List final files
-      run: find . -name "*.zip" -type f
+        echo "=== ALL ZIPs ==="
+        ls -la *.zip || true
     
     - name: Create Release
       uses: softprops/action-gh-release@v2
@@ -53,5 +50,3 @@ jobs:
           plugin.video.*-*.zip
           *.zip
         generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
