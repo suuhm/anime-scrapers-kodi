@@ -14,14 +14,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Create ZIPs
+    - name: Create all ZIPs
       run: |
-        mkdir -p release/
-        
+        # Alle ZIPs im Root erstellen
         for DIR in "Kodi 19+" "Kodi Legacy" XBMC; do
           if [ -d "$DIR" ]; then
             echo "Processing $DIR"
-            cd "$DIR"
+            pushd "$DIR" > /dev/null
             
             for ADDON_DIR in */; do
               if [ -f "${ADDON_DIR}addon.xml" ]; then
@@ -29,21 +28,30 @@ jobs:
                 VERSION=$(grep '<version>' "${ADDON_DIR}addon.xml" | head -1 | sed -E 's/.*<version>([0-9.]+).*/\1/')
                 
                 DIR_SUFFIX=$(echo "$DIR" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | sed 's/+//g')
-                ZIP_NAME="../../release/${ADDON_NAME}-${DIR_SUFFIX}-v${VERSION}.zip"
+                ZIP_NAME="../${ADDON_NAME}-${DIR_SUFFIX}-v${VERSION}.zip"
                 
+                echo "Creating $ZIP_NAME from $ADDON_DIR"
                 zip -r "$ZIP_NAME" "$ADDON_DIR"
-                echo "Created: $ZIP_NAME"
               fi
             done
-            cd ..
+            
+            popd > /dev/null
           fi
         done
         
-        echo "All ZIPs:"
-        ls -la release/
+        echo "=== ALL ZIPs created ==="
+        ls -la *.zip || echo "No ZIPs in root"
+        find . -name "*.zip" -type f
+    
+    - name: List final files
+      run: find . -name "*.zip" -type f
     
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
-        files: release/*.zip
+        files: |
+          plugin.video.*-*.zip
+          *.zip
         generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
