@@ -47,6 +47,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          plugin.video.*-*.zip
-          *.zip
+          plugin.video.aniworld-kodi-19+-v${{ github.ref_name }}.zip
+          plugin.video.aniworld-kodi-legacy-v${{ github.ref_name }}.zip
+          plugin.video.anixworld-xbmc-v${{ github.ref_name }}.zip
         generate_release_notes: true
