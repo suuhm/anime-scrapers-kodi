@@ -14,9 +14,7 @@ _base_url=sys.argv[0]
 _handle=int(sys.argv[1])
 
 ANIME_CACHE={}
-PROXY_BASE = get_base_url()
 WIN=xbmcgui.Window(10000)
-
 html_parser=HTMLParser()
 
 USER_AGENTS=[
@@ -37,6 +35,8 @@ def get_base_url():
 
             if kb.isConfirmed():
                 base = kb.getText()
+				if not "http" in base and not "https" in base:
+					base = "http://" + base
                 ADDON.setSetting("base_url", base)
         except:
             xbmcgui.Dialog().ok("Fehler", "Bitte URL in den Addon Einstellungen setzen")
@@ -232,7 +232,7 @@ def episodes(url,anime_key):
         li.setProperty("IsPlayable","true")
         li.setThumbnailImage(cover)
         li.setInfo("Video", {"Title": title, "Plot": desc})
-        #li.setLabel(title + "\n" + desc[:50] + "…")
+        #li.setLabel(title + "\n" + desc[:50] + "Â…")
         xbmcplugin.addDirectoryItem(_handle,_base_url+"?mode=play&url="+urllib.quote(PROXY_BASE+link),li,False)
     xbmcplugin.endOfDirectory(_handle)
 
@@ -262,7 +262,7 @@ def show_mirror_dialog(mirrors):
 
     titles = [m['hoster'] for m in mirrors]
     dialog = xbmcgui.Dialog()
-    selected = dialog.select('Stream wählen:', titles)
+    selected = dialog.select('Stream wÃ¤hlen:', titles)
 
     if selected >= 0:
         return mirrors[selected]['url']
@@ -320,6 +320,8 @@ def search():
 
 if __name__=="__main__":
     p={}
+	PROXY_BASE = get_base_url()
+
     if len(sys.argv)>2:
         for x in sys.argv[2][1:].split("&"):
             if "=" in x:
