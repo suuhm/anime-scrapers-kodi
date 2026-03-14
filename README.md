@@ -1,5 +1,11 @@
 # Anime Scrapers for Kodi / XBMC
 
+[![Join Discord](https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/2tRn7GWTRm)
+[![Stars](https://img.shields.io/github/stars/suuhm/anime-scrapers-kodi?color=gold&style=for-the-badge&logo=github)](https://github.com/suuhm/anime-scrapers-kodi)
+[![Forks](https://img.shields.io/github/forks/suuhm/anime-scrapers-kodi?color=silver&style=for-the-badge&logo=github)](https://github.com/suuhm/anime-scrapers-kodi/network)
+[![Issues](https://img.shields.io/github/issues/suuhm/anime-scrapers-kodi?color=red&style=for-the-badge&logo=github)](https://github.com/suuhm/anime-scrapers-kodi/issues)
+[![PRs](https://img.shields.io/github/issues-pr/suuhm/anime-scrapers-kodi?color=orange&style=for-the-badge&logo=github)](https://github.com/suuhm/anime-scrapers-kodi/pulls)
+
 A collection of **anime scraping addons and tools** for different generations of Kodi and XBMC.
 
 >
